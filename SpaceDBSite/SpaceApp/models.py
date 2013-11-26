@@ -19,6 +19,8 @@ class Astronaut(models.Model):
     dob = models.DateField(null=True, blank=True)
     class Meta:
         db_table = 'Astronaut'
+    def __unicode__(self):
+        return "%s %s"%(self.firstname, self.lastname)
 
 class Astronomer(models.Model):
     id = models.IntegerField(primary_key=True, db_column='astronomerId') # Field name made lowercase.
@@ -29,6 +31,8 @@ class Astronomer(models.Model):
     dob = models.DateField(null=True, blank=True)
     class Meta:
         db_table = 'Astronomer'
+    def __unicode__(self):
+        return "%s %s"%(self.firstname, self.lastname)
 
 class Comet(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
@@ -37,26 +41,32 @@ class Comet(models.Model):
     discoverer = models.ForeignKey(Astronomer, null=True, db_column='astronomerId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'Comet'
+    def __unicode__(self):
+        return self.name
 
 class Galaxy(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
-    galaxytype = models.CharField(max_length=20L, blank=True)
+    galaxytype = models.CharField(max_length=20L, db_column='type', blank=True)
     size = models.CharField(max_length=30L, blank=True)
     distfrommilkyway = models.FloatField(null=True, db_column='distFromMilkyWay', blank=True) # Field name made lowercase.
     discoverer = models.ForeignKey(Astronomer, null=True, db_column='astronomerId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'Galaxy'
+    def __unicode__(self):
+        return self.name
 
 class Gasesinatmosphere(models.Model):
-    planetname = models.ForeignKey('Planet', db_column='planetName') # Field name made lowercase.
+    planet = models.ForeignKey('Planet', db_column='planetName') # Field name made lowercase.
     gas = models.CharField(max_length=30L)
     class Meta:
         db_table = 'GasesInAtmosphere'
+    def __unicode__(self):
+        return "(%s, %s)"%(self.planet, self.gas)
 
 class Moon(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
     radius = models.FloatField(null=True, blank=True)
-    waterpresent = models.BooleanField(null=True, db_column='waterPresent', blank=True) # Field name made lowercase.
+    waterpresent = models.NullBooleanField(null=True, db_column='waterPresent', blank=True) # Field name made lowercase.
     mass = models.FloatField(null=True, blank=True)
     density = models.FloatField(null=True, blank=True)
     gravity = models.FloatField(null=True, blank=True)
@@ -67,11 +77,13 @@ class Moon(models.Model):
     discoverer = models.ForeignKey(Astronomer, null=True, db_column='astronomerId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'Moon'
+    def __unicode__(self):
+        return self.name
 
 class Planet(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
     radius = models.FloatField(null=True, blank=True)
-    waterpresent = models.BooleanField(null=True, db_column='waterPresent', blank=True) # Field name made lowercase.
+    waterpresent = models.NullBooleanField(null=True, db_column='waterPresent', blank=True) # Field name made lowercase.
     mass = models.FloatField(null=True, blank=True)
     density = models.FloatField(null=True, blank=True)
     gravity = models.FloatField(null=True, blank=True)
@@ -83,30 +95,36 @@ class Planet(models.Model):
     discoverer = models.ForeignKey(Astronomer, null=True, db_column='astronomerId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'Planet'
+    def __unicode__(self):
+        return self.name
 
 class Satellite(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
     country = models.CharField(max_length=30L, blank=True)
     launchyear = models.IntegerField(db_column='launchYear', blank=True) # Field name made lowercase.
     revolutionperiod = models.FloatField(null=True, db_column='revolutionPeriod', blank=True) # Field name made lowercase.
-    satellitetype = models.CharField(max_length=30L, blank=True)
+    satellitetype = models.CharField(max_length=30L, db_column='type', blank=True)
     launchvehicle = models.CharField(max_length=30L, db_column='launchVehicle', blank=True) # Field name made lowercase.
-    planet = models.ManyToManyField(Planet, through='Forplanet', db_table='ForPlanet')
-    moon = models.ManyToManyField(Moon, through='Formoon', db_table='ForMoon')
+    planet = models.ManyToManyField(Planet, through='Forplanet')
+    moon = models.ManyToManyField(Moon, through='Formoon')
     class Meta:
         db_table = 'Satellite'
+    def __unicode__(self):
+        return self.name
 
 class Spaceflight(models.Model):
     country = models.CharField(max_length=30L, blank=True)
     year = models.IntegerField()
     launchvehicle = models.CharField(max_length=30L, db_column='launchVehicle') # Field name made lowercase.
-    satellitename = models.CharField(max_length=30L, db_column='satelliteName', blank=True) # Field name made lowercase.
-    moonname = models.ForeignKey(Moon, null=True, db_column='moonName', blank=True) # Field name made lowercase.
-    leaderid = models.ForeignKey(Astronaut, null=True, db_column='leaderId', blank=True) # Field name made lowercase.
-    nextflight = models.ForeignKey('self', null=True, db_column='nextFlightName', blank=True) # Field name made lowercase.
-    member = models.ManyToManyField(Astronaut, through='Memberof', db_table='MemberOf')
+    satellite = models.CharField(max_length=30L, db_column='satelliteName', blank=True) # Field name made lowercase.
+    moon = models.ForeignKey(Moon, null=True, db_column='moonName', blank=True) # Field name made lowercase.
+    leader = models.ForeignKey(Astronaut, null=True, related_name='leaderid', db_column='leaderId', blank=True) # Field name made lowercase.
+    nextflight = models.ForeignKey('self', null=True, db_column='nextFlight', blank=True) # Field name made lowercase.
+    member = models.ManyToManyField(Astronaut, related_name='members', through='Memberof')
     class Meta:
         db_table = 'SpaceFlight'
+    def __unicode__(self):
+        return "%s - %s"%(self.launchvehicle, self.year)
 
 class Star(models.Model):
     name = models.CharField(max_length=30L, primary_key=True)
@@ -120,6 +138,8 @@ class Star(models.Model):
     secondarystar = models.ForeignKey('self', null=True, db_column='secondaryStar', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'Star'
+    def __unicode__(self):
+        return self.name
 
 class Educationastronaut(models.Model):
     university = models.CharField(max_length=30L)
@@ -127,6 +147,8 @@ class Educationastronaut(models.Model):
     astronaut = models.ForeignKey(Astronaut, null=True, db_column='astronautId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'educationAstronaut'
+    def __unicode__(self):
+        return "%s - %s, %s"%(self.astronaut, self.university, self.year)
 
 class Educationastronomer(models.Model):
     university = models.CharField(max_length=30L)
@@ -134,22 +156,30 @@ class Educationastronomer(models.Model):
     astronomer = models.ForeignKey(Astronomer, null=True, db_column='astronomerId', blank=True) # Field name made lowercase.
     class Meta:
         db_table = 'educationAstronomer'
+    def __unicode__(self):
+        return "%s - %s, %s"%(self.astronomer, self.university, self.year)
 
 class Formoon(models.Model):
     satellite = models.ForeignKey('Satellite', db_column='satelliteName') # Field name made lowercase.
     moon = models.ForeignKey('Moon', db_column='moonName') # Field name made lowercase.
     class Meta:
         db_table = 'ForMoon'
+    def __unicode__(self):
+        return "(%s, %s)"%(self.satellite, self.moon)
 
 class Forplanet(models.Model):
     satellite = models.ForeignKey('Satellite', db_column='SatelliteName') # Field name made lowercase.
     planet = models.ForeignKey('Planet', db_column='PlanetName') # Field name made lowercase.
     class Meta:
         db_table = 'ForPlanet'
+    def __unicode__(self):
+        return "(%s, %s)"%(self.satellite, self.planet)
 
 class Memberof(models.Model):
     astronaut = models.ForeignKey(Astronaut, db_column='astronautId') # Field name made lowercase.
-    spaceflight = models.ForeignKey('Spaceflight', db_column='spaceFlightName') # Field name made lowercase.
+    spaceflight = models.ForeignKey('Spaceflight', db_column='spaceFlight') # Field name made lowercase.
     class Meta:
         db_table = 'MemberOf'
+    def __unicode__(self):
+        return "(%s, %s)"%(self.astronaut, self.spaceflight)
 

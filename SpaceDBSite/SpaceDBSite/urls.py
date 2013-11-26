@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'SpaceDBSite.views.home', name='home'),
     # url(r'^SpaceDBSite/', include('SpaceDBSite.foo.urls')),
+    url(r'^', include('SpaceApp.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
