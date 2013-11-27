@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Space Database Website</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        {% load staticfiles %}
+
+        <!-- Loading Bootstrap -->
+        <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+
+        <!-- Loading Flat UI -->
+        <link href="{% static 'css/flat-ui.css' %}" rel="stylesheet">
+        <link href="{% static 'css/demo.css' %}" rel="stylesheet">
+
+        <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+        <!--[if lt IE 9]>
+        <script src="{% static 'js/html5shiv.js' %}"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-13">
+                    <div class="navbar navbar-inverse">
+                        <div class="navbar-collapse collapse navbar-collapse-01">
+                            <ul class="nav navbar-nav navbar-left">
+                                <li>
+                                <a href="/astronauts/">
+                                    Astronauts
+                                </a>
+                                <ul>
+                                    {% for a in astronauts %}
+                                    <li><a href="/astronauts/{{a.id}}">{{a.firstname}} {{a.lastname}}</a></li>
+                                    {% endfor %}
+                                    <li><a href="/astronauts/edit/">Add Entry</a></li>
+                                </ul> <!-- /Sub menu -->
+                                </li>
+                                <li>
+                                <a href="/astronomers/">
+                                    Astronomers
+                                </a>
+                                <ul>
+                                    {% for a in astronomers %}
+                                    <li><a href="/astronomers/{{a.id}}">{{a.firstname}} {{a.lastname}}</a></li>
+                                    {% endfor %}
+                                    <li><a href="/astronomers/edit/">Add Entry</a></li>
+                                </ul> <!-- /Sub menu -->
+                                </li>
+                                <li>
+                                <a href="/univs/">
+                                    Universities
+                                </a>
+                                </li>
+                            </ul>
+                        </div><!--/.nav -->
+                    </div>
+                </div>
+            </div> <!-- /row -->
+            {% if exists %}
+            <h3>Astronaut ID: {{ astroid }}</h3>
+            {% else %}
+            <h3>Astronauts</h3>
+            {% endif %}
+            <div class="demo-row typography-row">
+                <ol>
+                    {% for astro in astros %}
+                    <li><table border='1'>
+                        {% if astro.firstname %}
+                        <tr>
+                            <td>First Name:</td><td>{{ astro.firstname }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.middlename %}
+                        <tr>
+                            <td>Middle Name:</td><td>{{ astro.middlename }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.lastname %}
+                        <tr>
+                            <td>Last Name:</td><td>{{ astro.lastname }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.country %}
+                        <tr>
+                            <td>Country:</td><td>{{ astro.country }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.dob %}
+                        <tr>
+                            <td>Date of Birth:</td><td>{{ astro.dob }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.educationastronaut_set.all %}
+                        <tr>
+                            <td>Education Details:</td>
+                            <td><ul>
+                                    {% for univ in astro.educationastronaut_set.all %}
+                                    <li>{{ univ.university }} - {{ univ.year }}</li>
+                                    {% endfor %}
+                            </ul></td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.leaderid.all %}
+                        <tr>
+                            <td>Leader of:</td>
+                            <td><ul>
+                                    {% for flight in astro.leaderid.all %}
+                                    <li><a href='/flight/{{flight.id}}'>{{ flight }}</a></li>
+                                    {% endfor %}
+                            </ul></td>
+                        </tr>
+                        {% endif %}
+                        {% if astro.members.all %}
+                        <tr>
+                            <td>Member of:</td>
+                            <td><ul>
+                                    {% for flight in astro.members.all %}
+                                    <li><a href='/flight/{{flight.id}}'>{{ flight }}</a></li>
+                                    {% endfor %}
+                            </ul></td>
+                        </tr>
+                        {% endif %}
+                    </table></li>
+                    <br/>
+                    {% endfor %}
+                </ol>
+                <br/>
+                {% if exists %}
+                <a href="/astronauts/edit/{{astroid}}" class="btn pull-left btn-lg btn-inverse">Edit</a>
+                <a href="/astronauts/delete/{{astroid}}" class="btn pull-right btn-lg btn-danger">Delete</a>
+                {% endif %}
+            </div>
+            <video class="video-js"></video>
+        </div>
+        <!-- Load JS here for greater good =============================-->
+        <script src="{% static 'js/jquery-1.8.3.min.js' %}"></script>
+        <script src="{% static 'js/jquery-ui-1.10.3.custom.min.js' %}"></script>
+        <script src="{% static 'js/jquery.ui.touch-punch.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap-select.js' %}"></script>
+        <script src="{% static 'js/bootstrap-switch.js' %}"></script>
+        <script src="{% static 'js/flatui-checkbox.js' %}"></script>
+        <script src="{% static 'js/flatui-radio.js' %}"></script>
+        <script src="{% static 'js/jquery.tagsinput.js' %}"></script>
+        <script src="{% static 'js/jquery.placeholder.js' %}"></script>
+        <script src="{% static 'js/jquery.stacktable.js' %}"></script>
+        <script src="{% static 'js/application.js' %}"></script>
+    </body>
+</html>
+

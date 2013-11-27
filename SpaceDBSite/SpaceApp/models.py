@@ -11,10 +11,9 @@ from __future__ import unicode_literals
 from django.db import models
 
 class Astronaut(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='astronautId') # Field name made lowercase.
-    firstname = models.CharField(max_length=15L, db_column='firstName', blank=True) # Field name made lowercase.
+    firstname = models.CharField(max_length=15L, db_column='firstName') # Field name made lowercase.
     middlename = models.CharField(max_length=15L, db_column='middleName', blank=True) # Field name made lowercase.
-    lastname = models.CharField(max_length=15L, db_column='lastName', blank=True) # Field name made lowercase.
+    lastname = models.CharField(max_length=15L, db_column='lastName') # Field name made lowercase.
     country = models.CharField(max_length=30L, blank=True)
     dob = models.DateField(null=True, blank=True)
     class Meta:
@@ -23,7 +22,6 @@ class Astronaut(models.Model):
         return "%s %s"%(self.firstname, self.lastname)
 
 class Astronomer(models.Model):
-    id = models.IntegerField(primary_key=True, db_column='astronomerId') # Field name made lowercase.
     firstname = models.CharField(max_length=15L, db_column='firstName', blank=True) # Field name made lowercase.
     middlename = models.CharField(max_length=15L, db_column='middleName', blank=True) # Field name made lowercase.
     lastname = models.CharField(max_length=15L, db_column='lastName', blank=True) # Field name made lowercase.
